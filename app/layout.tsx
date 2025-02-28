@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { AR_One_Sans, Poppins } from "next/font/google";
+
+import { ThemeProvider } from "@/components/theme-provider"
+
 import "./globals.css";
 
 const arOneSans = AR_One_Sans({
@@ -30,7 +33,14 @@ export default function RootLayout({
       <body
         className={`${arOneSans.variable} ${poppins.variable} antialiased`}
       >
-        {children}
+         <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
       </body>
     </html>
   );
