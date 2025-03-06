@@ -1,5 +1,6 @@
 import Image from "next/image";
 import {RegisterLink, LoginLink} from "@kinde-oss/kinde-auth-nextjs/components";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
   return (
@@ -10,8 +11,8 @@ export default function Home() {
           <p className="text-lg ar-one-sans">This is AR One Sans in action.</p>
         </div>
         <div>
-          <LoginLink>Sign in</LoginLink>
-          <RegisterLink>Sign up</RegisterLink>
+          <Button variant={"ghost"}><LoginLink>Log in</LoginLink></Button>
+          <Button variant={"outline"}><RegisterLink>Sign up</RegisterLink></Button>
         </div>
       </div>
     </main>

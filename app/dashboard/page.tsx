@@ -5,6 +5,7 @@ import { PortfolioSummary } from "@/components/portfolio-summary";
 import { RecentTransactions } from "@/components/recent-transactions";
 import { WatchlistTable } from "@/components/watchlist-table";
 import {getKindeServerSession} from "@kinde-oss/kinde-auth-nextjs/server";
+import { MarketTicker } from "@/components/market-ticker";
 
 export default async function Page() {
     const {getUser} = getKindeServerSession();
@@ -12,6 +13,7 @@ export default async function Page() {
   return (
     <div className="space-y-6">
       <h1 className="text-2xl">Welcome, <span className="font-semibold">{user.given_name}</span></h1>
+      <MarketTicker />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <PortfolioSummary />
         <MarketOverview />
