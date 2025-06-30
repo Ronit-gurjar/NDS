@@ -5,9 +5,7 @@ export function MarketTicker() {
     <iframe
       className="w-full h-[75px] border-0"
       name="crbz_scag_frame"
-      scrolling="no"
       src="https://akm-img-a-in.tosshub.com/aajtak/resource/market-widgets/prod/bse-nse-ticker-v2.html?v=4.0"
-      allowTransparency={true}
     ></iframe>
   );
 }
