@@ -9,6 +9,10 @@
   --font-mono: var(--font-geist-mono);
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 :root {
   --font-ar-one-sans: "AR One Sans", sans-serif;
   --font-poppins: "Poppins", sans-serif;
