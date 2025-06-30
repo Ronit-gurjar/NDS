@@ -12,7 +12,7 @@ export default async function Page() {
     const user = await getUser();
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl">Welcome, <span className="font-semibold">{user.given_name}</span></h1>
+      <h1 className="text-2xl">Welcome, <span className="font-semibold">{user?.given_name}</span></h1>
       <MarketTicker />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <PortfolioSummary />
