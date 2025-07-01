@@ -28,7 +28,7 @@ const data = {
   menuItems: [
     { label: "Portfolio", icon: Home, href: "/dashboard" },
     { label: "Market", icon: BarChart3, href: "/dashboard/market" },
-    { label: "Orders", icon: ListOrdered, href: "/dashboard/orders" },
+    { label: "clients", icon: ListOrdered, href: "/dashboard/clients" },
     { label: "Search", icon: Search, href: "/dashboard/search" },
   ],
 };
