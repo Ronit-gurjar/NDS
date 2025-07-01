@@ -11,28 +11,24 @@ import Cookies from 'js-cookie';
 
 export default function ClientOnboardPage() {
   // Ensure this environment variable is prefixed with NEXT_PUBLIC_ for client-side access
-  const whatsappNumber = process.env.NEXT_PUBLIC_BUSINESS_NO; 
+  const whatsappNumber = process.env.NEXT_PUBLIC_BUSINESS_NO;
 
   const [userFullName, setUserFullName] = useState('');
-  const [userMobileNumber, setUserMobileNumber] = useState('');
+  // Removed userMobileNumber state as it's not directly used after being set,
+  // and the value is directly used from Cookies.get('userMobileNumber') for string creation.
+  // const [userMobileNumber, setUserMobileNumber] = useState(''); // REMOVED THIS LINE
+
   const [whatsappLink, setWhatsappLink] = useState('');
 
   useEffect(() => {
-    // --- DEBUGGING TIP: Check your browser's console for these logs! ---
-
-    // Read user data from cookies when the component mounts
     const storedFullName = Cookies.get('userFullName');
-    const storedMobileNumber = Cookies.get('userMobileNumber');
+    const storedMobileNumber = Cookies.get('userMobileNumber'); // Keep this local variable
 
-    // Ensure these cookies are actually being set correctly during login/signup.
-
-    // Set state to empty string if not found, handle display fallback in JSX where needed
-    setUserFullName(storedFullName || ''); 
-    setUserMobileNumber(storedMobileNumber || '');
+    setUserFullName(storedFullName || '');
 
     // Use actual cookie values if available, otherwise fall back to placeholders for the text
     const nameForText = storedFullName || '[YOUR_FULL_NAME_HERE]';
-    const mobileForText = storedMobileNumber || '[YOUR_MOBILE_NUMBER_HERE]';
+    const mobileForText = storedMobileNumber || '[YOUR_MOBILE_NUMBER_HERE]'; // Use storedMobileNumber directly here
 
     // Dynamically create the pre-populated text
     const dynamicPrepopulatedText =
@@ -46,7 +42,7 @@ export default function ClientOnboardPage() {
 
     setWhatsappLink(generatedWhatsappLink);
 
-  }, []); // Reverted to empty dependency array to run once on mount and read cookies
+  }, [whatsappNumber]); // Added whatsappNumber to dependency array
 
   // Get first name for display in the title, defaulting to 'there' for a friendly greeting
   const displayFirstName = userFullName.split(' ')[0] || 'there';
@@ -71,15 +67,13 @@ export default function ClientOnboardPage() {
             Thank yourself for taking the first step! Please connect with us on WhatsApp using the options below. Our team will reach out to you as soon as possible.
           </CardDescription>
         </CardHeader>
-        {/* Adjusted grid to use 1fr_auto_1fr for better column distribution */}
         <CardContent className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-2 items-start">
-          {/* First Part: WhatsApp Button */}
-          <div className="flex flex-col items-center px-4 py-0"> {/* Removed p-4, added specific px-4 py-0 */}
+          <div className="flex flex-col items-center px-4 py-0">
             <CardHeader className="w-full">
-              <CardTitle className="text-xl font-semibold text-center">Next Step:</CardTitle> {/* Added text-center */}
+              <CardTitle className="text-xl font-semibold text-center">Next Step:</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 w-full">
-              <CardDescription className="text-center"> {/* Added text-center */}
+              <CardDescription className="text-center">
                 Click on the button below and join us on WhatsApp. Our team will reach out to you as soon as possible.
               </CardDescription>
               <Button asChild className="w-full bg-green-600 hover:bg-green-700 text-white">
@@ -90,20 +84,18 @@ export default function ClientOnboardPage() {
             </CardContent>
           </div>
 
-          {/* Separator */}
           <div className="relative flex items-center justify-center h-full min-h-[150px]">
             <Separator orientation="vertical" className="h-full mx-auto hidden md:block bg-gray-700" />
             <div className="absolute inset-x-0 h-[1px] bg-gray-700 md:hidden my-4" />
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-sm text-gray-500 hidden md:block rounded">OR</div>
           </div>
 
-          {/* Second Part: QR Code */}
-          <div className="flex flex-col justify-center items-center px-4 py-0"> {/* Removed p-4, added specific px-4 py-0 */}
+          <div className="flex flex-col justify-center items-center px-4 py-0">
             <CardHeader className="w-full">
-              <CardTitle className="text-xl font-semibold text-center">Or continue on mobile:</CardTitle> {/* Added text-center */}
+              <CardTitle className="text-xl font-semibold text-center">Or continue on mobile:</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col justify-center items-center gap-4 w-full">
-              <CardDescription className="text-center"> {/* Added text-center */}
+              <CardDescription className="text-center">
                 Scan this QR code to open the same WhatsApp chat.
               </CardDescription>
               <div className="bg-white p-2 rounded-lg inline-block shadow-lg">
@@ -113,7 +105,6 @@ export default function ClientOnboardPage() {
           </div>
         </CardContent>
 
-        {/* Done button section moved to CardFooter */}
         <CardFooter className="mt-8 pt-6 border-t border-gray-700 flex justify-center">
           <GetStartedButton
             href="/"

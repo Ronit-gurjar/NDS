@@ -2,7 +2,7 @@
 'use client';
 
 import Image from "next/image";
-import React, { useRef, useEffect, useCallback } from 'react';
+import { useRef, useEffect } from 'react'; // Removed React and useCallback
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { TextPlugin } from 'gsap/TextPlugin';
@@ -49,7 +49,8 @@ export default function Home() {
   const contactFAQSectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    let ctx = gsap.context(() => {
+    // Changed 'let' to 'const' for 'ctx'
+    const ctx = gsap.context(() => {
       const tlHero = gsap.timeline({ defaults: { ease: "power3.out" } });
 
       if (heroMockupRef.current) {
@@ -70,13 +71,13 @@ export default function Home() {
 
       if (dailyReturnsRef.current && clientsRef.current && supportRef.current) {
         gsap.to(dailyReturnsRef.current, {
-          innerText: "8.0", // Start value for innerText, will be parsed as float
+          innerText: "8.0",
           duration: 1.5,
           ease: "power1.out",
           delay: 1.5,
           onUpdate: function() {
             const currentVal = parseFloat(this.targets()[0].innerText);
-            if (currentVal <= 12) { // Cap at 12 for the range
+            if (currentVal <= 12) {
                 this.targets()[0].innerText = currentVal.toFixed(1) + "%";
             } else {
                 this.targets()[0].innerText = "12.0%";
@@ -114,7 +115,7 @@ export default function Home() {
         contactFAQSectionRef,
       ];
 
-      sections.forEach((sectionRef, index) => {
+      sections.forEach((sectionRef) => { // Removed 'index' as it's not used
         if (sectionRef.current) {
           gsap.fromTo(sectionRef.current.children,
             { opacity: 0, y: 50 },
@@ -129,7 +130,6 @@ export default function Home() {
                 start: "top 80%",
                 end: "bottom top",
                 toggleActions: "play none none reverse",
-                // markers: true, // For debugging - remove in production
               },
             }
           );
@@ -149,7 +149,7 @@ export default function Home() {
       <section
         ref={heroSectionRef}
         className="relative w-full min-h-screen flex items-center justify-center pt-28 pb-40 px-4 md:px-8 overflow-hidden"
-        aria-labelledby="hero-heading" // ARIA: Link section to its heading
+        aria-labelledby="hero-heading"
       >
         {/* Background Triangle Image */}
         <div className="absolute inset-0 flex items-center justify-center z-0 opacity-80 pointer-events-none">
@@ -157,7 +157,7 @@ export default function Home() {
                           flex items-center mt-20 lg:mt-0 justify-center">
             <Image
               src={heroBackground}
-              alt="Abstract triangle background graphic for hero section" // More descriptive alt text
+              alt="Abstract triangle background graphic for hero section"
               fill
               style={{ objectFit: 'contain' }}
               quality={100}
@@ -180,19 +180,19 @@ export default function Home() {
 
           {/* Left Column: Headline and Stats */}
           <div ref={heroLeftContentRef} className="flex flex-col gap-5 lg:gap-16 text-center md:text-left md:col-span-1">
-            <h1 id="hero-heading" className="text-4xl lg:text-4xl font-bold leading-tight drop-shadow-md"> {/* ARIA: id for aria-labelledby */}
+            <h1 id="hero-heading" className="text-4xl lg:text-4xl font-bold leading-tight drop-shadow-md">
               Daily Trades <span className="text-emerald-500">✔</span><br/>
               Weekly Reports <span className="text-emerald-500">✔</span><br/>
               Monthly <span className="text-emerald-500">Returns</span>
             </h1>
             {/* Stats section */}
-            <div className="flex justify-center md:justify-start gap-8 mt-3" role="group" aria-label="Key performance statistics"> {/* ARIA: Group elements with a label */}
+            <div className="flex justify-center md:justify-start gap-8 mt-3" role="group" aria-label="Key performance statistics">
               <div className="flex flex-col items-center md:items-start">
-                <span ref={dailyReturnsRef} className="text-xl lg:text-2xl font-bold" aria-live="polite" aria-atomic="true">0%</span> {/* ARIA: For dynamic content updates */}
+                <span ref={dailyReturnsRef} className="text-xl lg:text-2xl font-bold" aria-live="polite" aria-atomic="true">0%</span>
                 <span className="text-sm text-muted-foreground">daily returns</span>
               </div>
               <div className="flex flex-col items-center md:items-start">
-                <span ref={clientsRef} className="text-xl lg:text-2xl font-bold" aria-live="polite" aria-atomic="true">0+</span> {/* ARIA: For dynamic content updates */}
+                <span ref={clientsRef} className="text-xl lg:text-2xl font-bold" aria-live="polite" aria-atomic="true">0+</span>
                 <span className="text-sm text-muted-foreground">clients</span>
               </div>
               <div className="flex flex-col items-center md:items-start">
@@ -211,7 +211,7 @@ export default function Home() {
               <Image
                 ref={heroMockupRef}
                 src={heroMockup}
-                alt="Hand holding phone displaying trading interface" // More descriptive alt text
+                alt="Hand holding phone displaying trading interface"
                 fill
                 style={{ objectFit: 'cover' }}
                 quality={100}
@@ -231,12 +231,12 @@ export default function Home() {
               <GetStartedButton
                 className="bg-emerald-500 hover:bg-emerald-600 text-black font-semibold rounded-full px-6 py-3 text-lg transition-colors duration-200"
                 size="lg"
-                aria-label="Get started with SignalHunt agency services" // ARIA: Descriptive label for the button
+                aria-label="Get started with SignalHunt agency services"
               >
                 Get Started
               </GetStartedButton>
               <span className="flex flex-row justify-center items-center gap-3">
-                to Learn more <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-all duration-200" aria-hidden="true" /> {/* ARIA: Hidden as it's decorative */}
+                to Learn more <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-all duration-200" aria-hidden="true" />
               </span>
             </div>
           </div>
@@ -245,7 +245,6 @@ export default function Home() {
 
       {/* Signal Trading Section */}
       <div ref={signalTradingSectionRef} className="px-6 -mt-5 sm:px-6 lg:px-8">
-        {/* Assuming SignalTradingSection component handles its own internal headings and ARIA */}
         <SignalTradingSection />
       </div>
 
@@ -253,15 +252,14 @@ export default function Home() {
       <section
         ref={marketViewSectionRef}
         className="relative z-10 w-full px-4 mt-8 md:mt-16 mb-16"
-        aria-labelledby="market-view-heading" // ARIA: Link section to its heading
+        aria-labelledby="market-view-heading"
       >
         <div className="max-w-5xl mx-auto text-center mb-8">
-          <h2 id="market-view-heading" className="text-3xl sm:text-4xl font-bold mb-4">Market Overview</h2> {/* ARIA: id for aria-labelledby */}
+          <h2 id="market-view-heading" className="text-3xl sm:text-4xl font-bold mb-4">Market Overview</h2>
           <p className="text-lg text-muted-foreground">
             Stay updated with real-time market data and insights.
           </p>
         </div>
-        {/* Assuming MarketView component handles its own internal accessibility */}
         <MarketView/>
       </section>
 
@@ -269,16 +267,15 @@ export default function Home() {
       <section
         ref={simpleMessageSectionRef}
         className="relative z-10 text-center max-w-3xl w-full px-4 mt-8"
-        aria-labelledby="message-heading" // ARIA: Link section to its heading
+        aria-labelledby="message-heading"
       >
-        <h2 id="message-heading" className="text-2xl sm:text-3xl font-semibold mb-4">Trade smarter. Trade with confidence.</h2> {/* ARIA: id for aria-labelledby */}
+        <h2 id="message-heading" className="text-2xl sm:text-3xl font-semibold mb-4">Trade smarter. Trade with confidence.</h2>
         <p className="text-lg text-muted-foreground">
           Achieve your financial goals through strategic trading, simplified. Our agency provides well-researched, battle-tested trading signals, backed by cutting-edge analytics, enabling you to participate in global markets with confidence and ease.
         </p>
       </section>
 
       <div ref={verifiedResultsSectionRef} className="w-full my-12">
-        {/* Assuming VerifiedResultsSection component handles its own internal headings and ARIA */}
         <VerifiedResultsSection />
       </div>
 
@@ -291,9 +288,8 @@ export default function Home() {
                    grid-flow-row md:grid-flow-dense
                    min-h-[600px] md:min-h-[800px] lg:min-h-[600px] xl:min-h-[700px]
                    px-4 mt-16 md:mt-24 mb-16"
-        aria-labelledby="services-heading" // ARIA: Link section to its heading
+        aria-labelledby="services-heading"
       >
-        {/* Visually hidden heading for accessibility. This ensures screen readers announce the section purpose. */}
         <h2 id="services-heading" className="sr-only">Our Services and Offerings</h2>
 
         <ServiceCard
@@ -301,7 +297,7 @@ export default function Home() {
           description="We handle your account, so you can relax and earn."
           imageSrc={accountHandlingGraphic}
           className="md:col-span-1 md:row-span-1"
-          aria-label="Service: Account Handling" // ARIA: Label for individual service cards if needed, or rely on internal structure
+          aria-label="Service: Account Handling"
         />
 
         <ServiceCard
