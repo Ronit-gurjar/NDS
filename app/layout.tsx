@@ -24,7 +24,7 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   // Base URL for your site - VERY IMPORTANT for absolute paths in Open Graph/Twitter
   // Replace with your actual domain when deploying!
-  metadataBase: new URL('https://www.your-agency-domain.com'),
+  metadataBase: new URL('https://signalhunt-six.vercel.app/'),
 
   // Primary SEO Tags
   title: {
@@ -33,19 +33,19 @@ export const metadata: Metadata = {
   },
   description: 'Harness the power of expert trading without the daily grind. SignalHunt delivers meticulously researched, AI-powered signals and strategies across diverse markets for a proven path to consistent growth.',
   keywords: ['trading agency', 'forex signals', 'crypto signals', 'stock signals', 'AI trading', 'algorithmic trading', 'passive income trading', 'financial growth', 'investing', 'market analysis', 'trade signals India', 'best trading signals'], // Added more specific keywords
-  authors: [{ name: 'Signal Hunt Team', url: 'https://www.your-agency-domain.com' }], // Update URL
+  authors: [{ name: 'Signal Hunt Team', url: 'https://signalhunt-six.vercel.app/' }], // Update URL
   creator: 'Signal Hunt',
   publisher: 'Signal Hunt',
   // Canonical URL (optional, but good for SEO if content might be duplicated)
   alternates: {
-    canonical: 'https://www.your-agency-domain.com', // Update URL
+    canonical: 'https://signalhunt-six.vercel.app/', // Update URL
   },
 
   // Open Graph / Facebook / LinkedIn / WhatsApp Sharing Tags
   openGraph: {
     title: 'Signal Hunt - Expert Trading Signals for Consistent Growth',
     description: 'Harness the power of expert trading without the daily grind. SignalHunt delivers meticulously researched, AI-powered signals and strategies across diverse markets for a proven path to consistent growth.',
-    url: 'https://www.your-agency-domain.com', // Update URL
+    url: 'https://signalhunt-six.vercel.app/', // Update URL
     siteName: 'Signal Hunt',
     images: [
       {
