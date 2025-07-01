@@ -14,7 +14,7 @@ export function WatchlistTable() {
     <Card className="bg-accent border-card">
       <CardHeader>
         <CardTitle>Watchlist</CardTitle>
-        <CardDescription className="">Stocks you're tracking</CardDescription>
+        <CardDescription className="">Stocks you&apos;re tracking</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto">

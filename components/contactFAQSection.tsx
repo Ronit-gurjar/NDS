@@ -59,7 +59,7 @@ export function ContactFAQSection() {
           <h2 className="text-2xl font-bold text-white mb-2">Ready to Boost Your Trades?</h2>
           {/* Changed text-muted-foreground to text-gray-200 for better contrast */}
           <p className="text-white/70 text-lg">
-            If you want to achieve maximum results with your trades, don't hesitate. Contact us now to learn how we can help you succeed.
+            If you want to achieve maximum results with your trades, don&apos;t hesitate. Contact us now to learn how we can help you succeed.
           </p>
         </div>
         <Button

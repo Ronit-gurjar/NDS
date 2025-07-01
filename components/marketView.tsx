@@ -89,7 +89,7 @@ export function MarketView() {
             <TabsTrigger value="weekly-trades" className="py-2 px-4 text-center">See Weekly Trades</TabsTrigger>
             <TabsTrigger value="accuracy" className="py-2 px-4 text-center">Accuracy</TabsTrigger>
             <TabsTrigger value="returns" className="py-2 px-4 text-center">Returns</TabsTrigger>
-            <TabsTrigger value="best-trade" className="py-2 px-4 text-center">Today's Best Trade</TabsTrigger> {/* Corrected capitalization */}
+            <TabsTrigger value="best-trade" className="py-2 px-4 text-center">Today&apos;s Best Trade</TabsTrigger> {/* Corrected capitalization */}
           </TabsList>
 
           <TabsContent value="weekly-trades" className="mt-4">

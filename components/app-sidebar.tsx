@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation"; // Import usePathname
-import { Home, BarChart3, ListOrdered, Search, User, LogOut } from "lucide-react";
+import { Home, BarChart3, ListOrdered, Search, LogOut } from "lucide-react";
 
 import {
   Sidebar,
@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/sidebar";
 import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import { NavUser } from "./nav-user";
-import { Button } from "./ui/button";
 
 const data = {
   user: {
