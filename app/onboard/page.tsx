@@ -84,13 +84,13 @@ export default function ClientOnboardPage() {
             </CardContent>
           </div>
 
-          <div className="relative flex items-center justify-center h-full min-h-[150px]">
+          <div className="hidden relative lg:flex items-center justify-center h-full min-h-[150px]">
             <Separator orientation="vertical" className="h-full mx-auto hidden md:block bg-gray-700" />
             <div className="absolute inset-x-0 h-[1px] bg-gray-700 md:hidden my-4" />
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-sm text-gray-500 hidden md:block rounded">OR</div>
           </div>
 
-          <div className="flex flex-col justify-center items-center px-4 py-0">
+          <div className="hidden lg:flex flex-col justify-center items-center px-4 py-0">
             <CardHeader className="w-full">
               <CardTitle className="text-xl font-semibold text-center">Or continue on mobile:</CardTitle>
             </CardHeader>

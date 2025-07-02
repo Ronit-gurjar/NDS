@@ -1,7 +1,7 @@
 // components/marketView.tsx
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card"; // Removed CardHeader, CardTitle, CardDescription as they are handled in page.tsx
+import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Table,
@@ -10,11 +10,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"; // Added Table imports
+} from "@/components/ui/table";
 import { WeeklyTradesDisplay } from "@/components/weekly-trades-display";
+import { TodayBestTradeDisplay } from "@/components/today-best-trade-display";
 import { useEffect, useState } from 'react';
 import { getTrades } from '@/app/actions/trade-actions';
-import { Prisma } from '@/lib/generated/prisma';
+import { Prisma } from '@prisma/client';
 
 type TradeType = Prisma.TradeGetPayload<{}>;
 
@@ -32,6 +33,7 @@ export function MarketView() {
         if (result.success) {
           setMarketTrades(result.data);
         } else {
+          // Changed to display the specific error from the result
           setErrorTrades(result.error || 'Failed to fetch market trades.');
         }
       } catch (err) {
@@ -72,31 +74,24 @@ export function MarketView() {
     { metric: "Total Monthly Trades", value: "100-200", details: "Overall trading activity" },
   ];
 
-  const todaysBestTrade = {
-    sno: 7,
-    date: "15-05-2025",
-    strike: "NIFTY 24800 CE",
-    profitLoss: "PROFIT",
-    totalPoints: 30.00,
-  };
-
   return (
-    <Card className="w-full border border-zinc-800 rounded-lg px-6 py-4">
+    <Card className="w-full border border-zinc-800 rounded-lg px-2 sm:px-4 py-4"> {/* Adjusted Card padding for smaller screens */}
       <CardContent className="p-0">
         <Tabs defaultValue="weekly-trades" className="w-full">
-          {/* Modified TabsList for responsive wrapping */}
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-4 h-auto p-1 mb-4"> {/* Added grid, grid-cols-2, md:grid-cols-4, lg:grid-cols-4, h-auto, mb-4 */}
-            <TabsTrigger value="weekly-trades" className="py-2 px-4 text-center">See Weekly Trades</TabsTrigger>
-            <TabsTrigger value="accuracy" className="py-2 px-4 text-center">Accuracy</TabsTrigger>
-            <TabsTrigger value="returns" className="py-2 px-4 text-center">Returns</TabsTrigger>
-            <TabsTrigger value="best-trade" className="py-2 px-4 text-center">Today&apos;s Best Trade</TabsTrigger> {/* Corrected capitalization */}
+          {/* Enhanced TabsList for better responsiveness */}
+          <TabsList className="grid w-full grid-cols-2 xs:grid-cols-4 md:grid-cols-4 lg:grid-cols-4 h-auto p-1 mb-4 flex-wrap"> {/* Added xs:grid-cols-4 and flex-wrap as fallback */}
+            <TabsTrigger value="weekly-trades" className="py-2 px-2 text-center text-xs sm:text-sm">See Weekly Trades</TabsTrigger> {/* Adjusted font size */}
+            <TabsTrigger value="accuracy" className="py-2 px-2 text-center text-xs sm:text-sm">Accuracy</TabsTrigger> {/* Adjusted font size */}
+            <TabsTrigger value="returns" className="py-2 px-2 text-center text-xs sm:text-sm">Returns</TabsTrigger> {/* Adjusted font size */}
+            <TabsTrigger value="best-trade" className="py-2 px-2 text-center text-xs sm:text-sm">Today&apos;s Best Trade</TabsTrigger> {/* Adjusted font size */}
           </TabsList>
 
           <TabsContent value="weekly-trades" className="mt-4">
             {loadingTrades ? (
               <p className="text-center text-muted-foreground py-4">Loading weekly trades for overview...</p>
             ) : errorTrades ? (
-              <p className="text-center text-red-500 py-4">Error: {errorTrades}</p>
+              // Added word-break-all to handle very long error messages
+              <p className="text-center text-red-500 py-4 px-2 text-sm break-words md:break-normal">Error: {errorTrades}</p>
             ) : (
               <WeeklyTradesDisplay trades={marketTrades} />
             )}
@@ -104,13 +99,13 @@ export function MarketView() {
 
           {/* Tab Content for Accuracy (now with table formatting) */}
           <TabsContent value="accuracy" className="mt-4">
-            <div className="rounded-md border overflow-hidden">
+            <div className="rounded-md border overflow-hidden overflow-x-auto">
               <Table>
                 <TableHeader className="bg-muted">
                   <TableRow>
-                    <TableHead>Metric</TableHead>
-                    <TableHead>Value</TableHead>
-                    <TableHead>Details</TableHead>
+                    <TableHead className="min-w-[100px]">Metric</TableHead> {/* Added min-width */}
+                    <TableHead className="min-w-[80px]">Value</TableHead> {/* Added min-width */}
+                    <TableHead className="min-w-[120px]">Details</TableHead> {/* Added min-width */}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -129,26 +124,27 @@ export function MarketView() {
           {/* Tab Content for Returns (now with nested tabs and tables) */}
           <TabsContent value="returns" className="mt-4">
             <Tabs value={activeReturnTab} onValueChange={setActiveReturnTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-3 h-auto p-1 mb-4"> {/* Nested tabs are always 3 columns */}
-                <TabsTrigger value="daily" className="py-2 px-4 text-center">
+              <TabsList className="grid w-full grid-cols-3 h-auto p-1 mb-4 flex-wrap">
+                <TabsTrigger value="daily" className="py-2 px-2 text-center text-xs sm:text-sm">
                   Daily
                 </TabsTrigger>
-                <TabsTrigger value="weekly" className="py-2 px-4 text-center">
+                <TabsTrigger value="weekly" className="py-2 px-2 text-center text-xs sm:text-sm">
                   Weekly
                 </TabsTrigger>
-                <TabsTrigger value="monthly" className="py-2 px-4 text-center">
+                <TabsTrigger value="monthly" className="py-2 px-2 text-center text-xs sm:text-sm">
                   Monthly
                 </TabsTrigger>
               </TabsList>
 
               <TabsContent value="daily">
-                <div className="rounded-md border overflow-hidden">
+                {/* Added overflow-x-auto */}
+                <div className="rounded-md border overflow-hidden overflow-x-auto">
                   <Table>
                     <TableHeader className="bg-muted">
                       <TableRow>
-                        <TableHead>Metric</TableHead>
-                        <TableHead>Value</TableHead>
-                        <TableHead>Details</TableHead>
+                        <TableHead className="min-w-[100px]">Metric</TableHead>
+                        <TableHead className="min-w-[80px]">Value</TableHead>
+                        <TableHead className="min-w-[120px]">Details</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -165,13 +161,14 @@ export function MarketView() {
               </TabsContent>
 
               <TabsContent value="weekly">
-                <div className="rounded-md border overflow-hidden">
+                {/* Added overflow-x-auto */}
+                <div className="rounded-md border overflow-hidden overflow-x-auto">
                   <Table>
                     <TableHeader className="bg-muted">
                       <TableRow>
-                        <TableHead>Metric</TableHead>
-                        <TableHead>Value</TableHead>
-                        <TableHead>Details</TableHead>
+                        <TableHead className="min-w-[100px]">Metric</TableHead>
+                        <TableHead className="min-w-[80px]">Value</TableHead>
+                        <TableHead className="min-w-[120px]">Details</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -188,13 +185,14 @@ export function MarketView() {
               </TabsContent>
 
               <TabsContent value="monthly">
-                <div className="rounded-md border overflow-hidden">
+                {/* Added overflow-x-auto */}
+                <div className="rounded-md border overflow-hidden overflow-x-auto">
                   <Table>
                     <TableHeader className="bg-muted">
                       <TableRow>
-                        <TableHead>Metric</TableHead>
-                        <TableHead>Value</TableHead>
-                        <TableHead>Details</TableHead>
+                        <TableHead className="min-w-[100px]">Metric</TableHead>
+                        <TableHead className="min-w-[80px]">Value</TableHead>
+                        <TableHead className="min-w-[120px]">Details</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -212,36 +210,9 @@ export function MarketView() {
             </Tabs>
           </TabsContent>
 
-          {/* Tab Content for Today's Best Trade (now with table formatting) */}
+          {/* Tab Content for Today's Best Trade - Now using TodayBestTradeDisplay */}
           <TabsContent value="best-trade" className="mt-4">
-            <div className="rounded-md border overflow-hidden">
-              <Table>
-                <TableHeader className="bg-muted">
-                  <TableRow>
-                    <TableHead>S.NO</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Strike</TableHead>
-                    <TableHead>P/L</TableHead>
-                    <TableHead className="text-right">Total Points</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <TableRow className="hover:bg-accent">
-                    <TableCell className="font-medium">{todaysBestTrade.sno}</TableCell>
-                    <TableCell>{todaysBestTrade.date}</TableCell>
-                    <TableCell>{todaysBestTrade.strike}</TableCell>
-                    <TableCell
-                      className={
-                        todaysBestTrade.profitLoss === 'PROFIT' ? 'text-green-500' : 'text-red-500'
-                      }
-                    >
-                      {todaysBestTrade.profitLoss}
-                    </TableCell>
-                    <TableCell className="text-right">{todaysBestTrade.totalPoints.toFixed(2)}</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </div>
+            <TodayBestTradeDisplay />
           </TabsContent>
         </Tabs>
       </CardContent>

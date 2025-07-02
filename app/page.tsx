@@ -2,7 +2,7 @@
 'use client';
 
 import Image from "next/image";
-import { useRef, useEffect } from 'react'; // Removed React and useCallback
+import { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { TextPlugin } from 'gsap/TextPlugin';
@@ -49,7 +49,6 @@ export default function Home() {
   const contactFAQSectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Changed 'let' to 'const' for 'ctx'
     const ctx = gsap.context(() => {
       const tlHero = gsap.timeline({ defaults: { ease: "power3.out" } });
 
@@ -71,8 +70,8 @@ export default function Home() {
 
       if (dailyReturnsRef.current && clientsRef.current && supportRef.current) {
         gsap.to(dailyReturnsRef.current, {
-          innerText: "8.0",
-          duration: 1.5,
+          innerText: "12.0",
+          duration: 0.8,
           ease: "power1.out",
           delay: 1.5,
           onUpdate: function() {
@@ -85,8 +84,8 @@ export default function Home() {
           }
         });
         gsap.to(clientsRef.current, {
-          innerText: 60,
-          duration: 1.5,
+          innerText: 100,
+          duration: 0.8,
           ease: "power1.out",
           delay: 1.6,
           snap: { innerText: 1 },
@@ -96,7 +95,7 @@ export default function Home() {
         });
         gsap.to(supportRef.current, {
           innerText: 24,
-          duration: 1.5,
+          duration: 0.8,
           ease: "power1.out",
           delay: 1.7,
           snap: { innerText: 1 },
@@ -115,14 +114,14 @@ export default function Home() {
         contactFAQSectionRef,
       ];
 
-      sections.forEach((sectionRef) => { // Removed 'index' as it's not used
+      sections.forEach((sectionRef) => {
         if (sectionRef.current) {
           gsap.fromTo(sectionRef.current.children,
             { opacity: 0, y: 50 },
             {
               opacity: 1,
               y: 0,
-              duration: 1.2,
+              duration: 0.5,
               ease: "power2.out",
               stagger: 0.1,
               scrollTrigger: {
@@ -154,7 +153,7 @@ export default function Home() {
         {/* Background Triangle Image */}
         <div className="absolute inset-0 flex items-center justify-center z-0 opacity-80 pointer-events-none">
           <div className="relative w-[600px] h-[600px] lg:w-[800px] lg:h-[800px] xl:w-[1000px] xl:h-[1000px]
-                          flex items-center mt-20 lg:mt-0 justify-center">
+                           flex items-center mt-20 lg:mt-0 justify-center">
             <Image
               src={heroBackground}
               alt="Abstract triangle background graphic for hero section"
@@ -226,7 +225,9 @@ export default function Home() {
             <p className="text-lg text-muted-foreground drop-shadow-sm">
               Pioneering trading solutions that empower individuals to achieve maximum results with their investments.
             </p>
-            <div className="flex flex-wrap justify-evenly md:justify-center items-center group mt-8 gap-4 bg-gray-800/70 hover:bg-gray-700/50 text-white rounded-full px-1 py-2 text-lg transition-colors duration-200">
+            {/* CTA Button & Text - Responsiveness fixed here */}
+            <div className="flex flex-row justify-center items-center group mt-8 gap-4
+                            bg-gray-800/70 hover:bg-gray-700/50 text-white rounded-full px-1 py-2 text-lg transition-colors duration-200">
               {/* Get Started Button */}
               <GetStartedButton
                 className="bg-emerald-500 hover:bg-emerald-600 text-black font-semibold rounded-full px-6 py-3 text-lg transition-colors duration-200"
@@ -235,7 +236,7 @@ export default function Home() {
               >
                 Get Started
               </GetStartedButton>
-              <span className="flex flex-row justify-center items-center gap-3">
+              <span className="flex flex-row justify-center items-center gap-3 text-base md:text-lg">
                 to Learn more <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-all duration-200" aria-hidden="true" />
               </span>
             </div>
@@ -244,6 +245,7 @@ export default function Home() {
       </section>
 
       {/* Signal Trading Section */}
+      {/* No direct changes to this div, changes are within SignalTradingSection component */}
       <div ref={signalTradingSectionRef} className="px-6 -mt-5 sm:px-6 lg:px-8">
         <SignalTradingSection />
       </div>
@@ -280,14 +282,14 @@ export default function Home() {
       </div>
 
       {/* Services Section - Dynamic Bento Grid */}
+      {/* Min-heights adjusted/removed for better content-driven height and animation trigger */}
       <section
         ref={servicesSectionRef}
         className="relative z-10 max-w-6xl w-full
                    grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4
                    gap-6
                    grid-flow-row md:grid-flow-dense
-                   min-h-[600px] md:min-h-[800px] lg:min-h-[600px] xl:min-h-[700px]
-                   px-4 mt-16 md:mt-24 mb-16"
+                   py-16 px-4 mt-16 md:mt-24 mb-16"
         aria-labelledby="services-heading"
       >
         <h2 id="services-heading" className="sr-only">Our Services and Offerings</h2>

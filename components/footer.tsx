@@ -7,6 +7,18 @@ import Image from 'next/image';
 import { LogoTrigger } from './logoTrigger';
 import logo from "../public/logo-full.svg"
 
+// Define your services and their corresponding messages
+  const services = [
+    { name: "Signal Trading", message: "Hey there, I'm interested in your Signal Trading service. Can you tell me more?" },
+    { name: "Account Handling", message: "Hey there, I'd like to inquire about your Account Handling service." },
+    { name: "Daily Trades", message: "Hey there, I want to know more about your Daily Trades service." },
+    { name: "Crypto Trading", message: "Hey there, I'm interested in your Crypto Trading service." },
+    { name: "Stocks Trading", message: "Hey there, I want to learn about your Stocks Trading service." },
+    { name: "Futures Trading", message: "Hey there, I'm interested in your Futures Trading service. How does it work?" },
+  ];
+
+  const whatsAppNumber = process.env.NEXT_PUBLIC_BUSINESS_NO
+
 export function Footer() {
   return (
     <footer className="w-full bg-black text-white py-12 md:py-16 border-t border-gray-800">
@@ -45,12 +57,17 @@ export function Footer() {
               <div className="flex flex-col items-center sm:items-start space-y-4 text-center sm:text-left">
                 <h3 className="text-lg font-semibold text-white">Services</h3>
                 <nav className="flex flex-col space-y-2 text-sm text-gray-400">
-                  <Link href="#" className="hover:text-green-500 transition-colors">Signal Trading</Link>
-                  <Link href="#" className="hover:text-green-500 transition-colors">Account Handling</Link>
-                  <Link href="#" className="hover:text-green-500 transition-colors">Daily Trades</Link>
-                  <Link href="#" className="hover:text-green-500 transition-colors">Crypto Trading</Link>
-                  <Link href="#" className="hover:text-green-500 transition-colors">Stocks Trading</Link>
-                  <Link href="#" className="hover:text-green-500 transition-colors">Futures Trading</Link>
+                  {services.map((service, index) => (
+                    <Link
+                      key={index} // Using index as key is acceptable here since the list is static
+                      href={`https://wa.me/${whatsAppNumber}?text=${encodeURIComponent(service.message)}`}
+                      target="_blank" // Opens in a new tab
+                      rel="noopener noreferrer" // Recommended for security when using target="_blank"
+                      className="hover:text-green-500 transition-colors"
+                    >
+                      {service.name}
+                    </Link>
+                  ))}
                 </nav>
               </div>
 

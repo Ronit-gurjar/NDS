@@ -8,33 +8,37 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger } from "@/components/ui/sheet";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Trash2, PlusCircle, RotateCcw, PencilLineIcon } from 'lucide-react';
 
-import { type Trade as PrismaTrade } from '@/lib/generated/prisma';
+import { type Trade as PrismaTrade } from '@prisma/client'; // Only import Trade type
 
+// Import common form fields component
+import { TradeFormFields } from './trade-form-fields';
+
+// Import server actions for only Trade
 import { getTrades, createTrade, updateTrade, deleteTrade, deleteAllTrades } from "@/app/actions/trade-actions";
 
 export default function WeeklyTradeTable() {
   const [trades, setTrades] = useState<PrismaTrade[]>([]);
   const [loading, setLoading] = useState(true);
   const [isPending, startTransition] = useTransition();
+
+  // States for Trade management
   const [isAddSheetOpen, setIsAddSheetOpen] = useState(false);
   const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
   const [editingTrade, setEditingTrade] = useState<PrismaTrade | null>(null);
   const [isDeleteAllConfirmOpen, setIsDeleteAllConfirmOpen] = useState(false);
-
   const [showUpdateReminder, setShowUpdateReminder] = useState(false);
 
+  // --- Data Fetching Function ---
   const fetchTrades = async () => {
     setLoading(true);
     const result = await getTrades();
     if (result.success) {
       setTrades(result.data);
     } else {
-      toast.error(result.error || "Failed to fetch trades.");
+      toast.error(result.error || "Failed to fetch weekly trades.");
     }
     setLoading(false);
   };
@@ -43,23 +47,25 @@ export default function WeeklyTradeTable() {
     fetchTrades();
   }, []);
 
+  // Reminder Logic (remains unchanged)
   useEffect(() => {
     const lastUpdateDate = localStorage.getItem('lastTradeUpdate');
     const today = new Date();
     const dayOfWeek = today.getDay(); // 0 for Sunday, 6 for Saturday
 
     if (dayOfWeek === 0) { // If it's Sunday
-        if (!lastUpdateDate || new Date(lastUpdateDate).setHours(0,0,0,0) < today.setHours(0,0,0,0)) {
-            setShowUpdateReminder(true);
-        } else {
-            setShowUpdateReminder(false);
-        }
-    } else {
+      if (!lastUpdateDate || new Date(lastUpdateDate).setHours(0,0,0,0) < today.setHours(0,0,0,0)) {
+        setShowUpdateReminder(true);
+      } else {
         setShowUpdateReminder(false);
+      }
+    } else {
+      setShowUpdateReminder(false);
     }
-  }, [isPending]);
+  }, [isPending]); // Re-run reminder check if any action is pending
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  // --- Handlers for Weekly Trades ---
+  const handleTradeSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
 
@@ -77,10 +83,10 @@ export default function WeeklyTradeTable() {
 
       if (result.success) {
         toast.success(editingTrade ? "Trade updated successfully!" : "Trade added successfully!");
-        setIsAddSheetOpen(false); // Close the sheet on success
+        setIsAddSheetOpen(false);
         setIsEditSheetOpen(false);
         setEditingTrade(null);
-        fetchTrades();
+        fetchTrades(); // Refresh weekly trades
       } else {
         if (result.errors) {
           Object.entries(result.errors).forEach(([field, messages]) => {
@@ -95,26 +101,26 @@ export default function WeeklyTradeTable() {
     });
   };
 
-  const handleDelete = (id: string) => {
+  const handleTradeDelete = (id: string) => {
     startTransition(async () => {
       const result = await deleteTrade(id);
       if (result.success) {
         toast.success("Trade deleted successfully!");
-        fetchTrades();
+        fetchTrades(); // Refresh weekly trades
       } else {
         toast.error(result.error || "Failed to delete trade.");
       }
     });
   };
 
-  const handleDeleteAll = () => {
+  const handleAllTradesDelete = () => {
     startTransition(async () => {
       const result = await deleteAllTrades();
       if (result.success) {
-        toast.success("All trades deleted successfully!");
+        toast.success("All weekly trades deleted successfully!");
         localStorage.setItem('lastTradeUpdate', new Date().toISOString());
         setShowUpdateReminder(false);
-        fetchTrades();
+        fetchTrades(); // Refresh weekly trades
         setIsDeleteAllConfirmOpen(false);
       } else {
         toast.error(result.error || "Failed to delete all trades.");
@@ -122,227 +128,162 @@ export default function WeeklyTradeTable() {
     });
   };
 
-  const TradeFormFields = ({ initialData }: { initialData?: PrismaTrade | null }) => (
-    <>
-      <div className="grid gap-2">
-        <Label htmlFor="sno">S.NO</Label>
-        <Input id="sno" name="sno" type="number" required defaultValue={initialData?.sno || ''} />
-      </div>
-      <div className="grid gap-2">
-        <Label htmlFor="date">Date</Label>
-        <Input id="date" name="date" type="text" placeholder="e.g., 12-05-2025" required defaultValue={initialData?.date || ''} />
-      </div>
-      <div className="grid gap-2">
-        <Label htmlFor="strike">Strike</Label>
-        <Input id="strike" name="strike" type="text" required defaultValue={initialData?.strike || ''} />
-      </div>
-      <div className="grid gap-2">
-        <Label htmlFor="buyingPrice">Buying Price</Label>
-        <Input id="buyingPrice" name="buyingPrice" type="number" step="0.01" required defaultValue={initialData?.buyingPrice || ''} />
-      </div>
-      <div className="grid gap-2">
-        <Label htmlFor="exitPrice">Exit Price</Label>
-        <Input id="exitPrice" name="exitPrice" type="number" step="0.01" required defaultValue={initialData?.exitPrice || ''} />
-      </div>
-      <div className="grid gap-2">
-        <Label htmlFor="target">Target</Label>
-        <Input id="target" name="target" type="text" defaultValue={initialData?.target || ''} />
-      </div>
-      <div className="grid gap-2">
-        <Label htmlFor="high">High</Label>
-        <Input id="high" name="high" type="text" defaultValue={initialData?.high || ''} />
-      </div>
-      <div className="grid gap-2">
-        <Label htmlFor="profitLoss">Profit/Loss</Label>
-        <Input id="profitLoss" name="profitLoss" type="text" placeholder="PROFIT / LOSS" defaultValue={initialData?.profitLoss || ''} />
-      </div>
-      <div className="grid gap-2">
-        <Label htmlFor="totalPoints">Total Points</Label>
-        <Input id="totalPoints" name="totalPoints" type="number" step="0.01" defaultValue={initialData?.totalPoints || ''} />
-      </div>
-    </>
-  );
-
   return (
     <Card className="w-full shadow-lg my-8 border border-zinc-800 rounded-lg">
-      <CardHeader>
-        {/* Adjusted Header: flex for alignment, space-x for gaps, and items-center for vertical centering */}
-        <div className="flex flex-row sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0 sm:space-x-4">
-          <CardTitle className="text-xl font-bold whitespace-nowrap">Weekly Trade Data</CardTitle>
+      <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0 pb-2">
+        <CardTitle className="text-xl font-bold whitespace-nowrap">Weekly Trade Management</CardTitle>
 
-          {/* Button Group: flex-wrap on mobile, no wrapping on sm+ */}
-          <div className="flex flex-wrap justify-end gap-2 sm:gap-4 ml-auto">
-            {/* Add New Trade Button */}
-            <Sheet open={isAddSheetOpen} onOpenChange={setIsAddSheetOpen}>
-              <SheetTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex-grow sm:flex-none" // flex-grow to fill available space on mobile row/wrap, flex-none on desktop
-                >
-                  <PlusCircle className="h-4 w-4 mr-2 sm:mr-0" /> {/* Icon always visible, mr-2 only when text is next to it */}
-                  <span className="hidden sm:inline">Add New Trade</span> {/* Full text on sm+ */}
-                  <span className="inline sm:hidden">Add Trade</span> {/* Short text on mobile, or can make icon-only */}
-                </Button>
-              </SheetTrigger>
-              {/* === ADD NEW TRADE SHEET CONTENT MODIFICATION === */}
-              <SheetContent className="flex flex-col h-full max-h-screen p-8"> {/* Added h-full and max-h-screen */}
-                <SheetHeader>
-                  <SheetTitle>Add New Trade</SheetTitle>
-                  <SheetDescription>
-                    Enter the details for the new weekly trade.
-                  </SheetDescription>
-                </SheetHeader>
-                {/* The form itself is a flex container that grows to fill remaining space */}
-                <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0"> {/* Added flex-1 and min-h-0 */}
-                  {/* This div contains the scrollable form fields */}
-                  <div className="flex-1 overflow-y-auto grid gap-4 py-4 pr-2"> {/* This is the scrollable area */}
-                    <TradeFormFields />
-                  </div>
-                  {/* The submit button, which stays fixed at the bottom */}
-                  <div className="mt-4">
-                    <Button type="submit" disabled={isPending} className="w-full">
-                      {isPending ? "Adding..." : "Add Trade"}
-                    </Button>
-                  </div>
-                </form>
-              </SheetContent>
-              {/* ============================================== */}
-            </Sheet>
-
-            {/* Delete All Button with Confirmation Dialog */}
-            <Dialog open={isDeleteAllConfirmOpen} onOpenChange={setIsDeleteAllConfirmOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  className="flex-grow sm:flex-none" // flex-grow to fill available space on mobile row/wrap, flex-none on desktop
-                >
-                  <Trash2 className="h-4 w-4 mr-2 sm:mr-0" /> {/* Icon always visible, mr-2 only when text is next to it */}
-                  <span className="hidden sm:inline">Delete All</span> {/* Full text on sm+ */}
-                  <span className="inline sm:hidden">Delete</span> {/* Short text on mobile, or can make icon-only */}
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Are you absolutely sure?</DialogTitle>
-                  <DialogDescription>
-                    This action cannot be undone. This will permanently delete all weekly trade data.
-                  </DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => setIsDeleteAllConfirmOpen(false)}>Cancel</Button>
-                  <Button variant="destructive" onClick={handleDeleteAll} disabled={isPending}>
-                    {isPending ? "Deleting..." : "Confirm Delete All"}
+        <div className="flex flex-col xs:flex-row gap-2 w-full sm:w-auto justify-end">
+          <Sheet open={isAddSheetOpen} onOpenChange={setIsAddSheetOpen}>
+            <SheetTrigger asChild>
+              <Button variant="outline" size="sm" className="w-full sm:w-auto">
+                <PlusCircle className="h-4 w-4 mr-2 sm:mr-1" />
+                <span className="hidden xs:inline">Add New Trade</span>
+                <span className="inline xs:hidden">Add Trade</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent className="flex flex-col h-full max-h-screen p-8">
+              <SheetHeader>
+                <SheetTitle>Add New Weekly Trade</SheetTitle>
+                <SheetDescription>Enter the details for the new weekly trade.</SheetDescription>
+              </SheetHeader>
+              <form onSubmit={handleTradeSubmit} className="flex flex-col flex-1 min-h-0">
+                <div className="flex-1 overflow-y-auto grid gap-4 py-4 pr-2">
+                  <TradeFormFields formIdPrefix="weekly-trade" />
+                </div>
+                <div className="mt-4">
+                  <Button type="submit" disabled={isPending} className="w-full">
+                    {isPending ? "Adding..." : "Add Trade"}
                   </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </div>
-        </div>
-        {showUpdateReminder && (
-          <p className="text-red-500 text-sm mt-2">
-            Reminder: Please update the trade data this weekend! <RotateCcw className="inline h-4 w-4 ml-1" />
-          </p>
-        )}
-      </CardHeader>
-      <Separator />
-      <CardContent className="overflow-x-auto p-0">
-        {loading ? (
-          <p className="text-center text-muted-foreground py-4">Loading trade data...</p>
-        ) : trades.length === 0 ? (
-          <p className="text-center text-muted-foreground py-4">No weekly trade data available. Add a new trade!</p>
-        ) : (
-          <Table className="min-w-full">
-            <TableHeader className="bg-zinc-800 text-muted-foreground">
-              <TableRow>
-                <TableHead className="w-[50px] px-4 py-2">S.NO</TableHead>
-                <TableHead className="px-4 py-2">Date</TableHead>
-                <TableHead className="px-4 py-2">Strike</TableHead>
-                <TableHead className="px-4 py-2">Buying Price</TableHead>
-                <TableHead className="px-4 py-2">Exit Price</TableHead>
-                <TableHead className="px-4 py-2">Target</TableHead>
-                <TableHead className="px-4 py-2">High</TableHead>
-                <TableHead className="px-4 py-2">Profit/Loss</TableHead>
-                <TableHead className="text-right px-4 py-2">Total Points</TableHead>
-                <TableHead className="w-[100px] text-right px-4 py-2">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody className="px-2">
-              {trades.map((trade) => (
-                <TableRow key={trade.id} className="border-b border-zinc-800">
-                  <TableCell className="font-medium px-4 py-2">{trade.sno}</TableCell>
-                  <TableCell className="px-4 py-2">{trade.date}</TableCell>
-                  <TableCell className="text-emerald-400 px-4 py-2">{trade.strike}</TableCell>
-                  <TableCell className="px-4 py-2">{trade.buyingPrice.toFixed(2)}</TableCell>
-                  <TableCell className="px-4 py-2">{trade.exitPrice.toFixed(2)}</TableCell>
-                  <TableCell className="px-4 py-2">{trade.target || 'N/A'}</TableCell>
-                  <TableCell className="px-4 py-2">{trade.high || 'N/A'}</TableCell>
-                  <TableCell
-                    className={
-                      trade.profitLoss === 'PROFIT' ? 'text-green-500 px-4 py-2' : 'text-red-500 px-4 py-2'
-                    }
-                  >
-                    {trade.profitLoss || 'N/A'}
-                  </TableCell>
-                  <TableCell className="text-right px-4 py-2">
-                    {trade.totalPoints ? trade.totalPoints.toFixed(2) : 'N/A'}
-                  </TableCell>
-                  <TableCell className="text-right flex items-center justify-end gap-2 px-4 py-2">
-                    {/* Edit Button */}
-                    <Sheet open={isEditSheetOpen && editingTrade?.id === trade.id} onOpenChange={(open) => {
-                      setIsEditSheetOpen(open);
-                      if (!open) setEditingTrade(null);
-                    }}>
-                      <SheetTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => {
-                            setEditingTrade(trade);
-                            setIsEditSheetOpen(true);
-                          }}
-                        >
-                          <PencilLineIcon className="h-4 w-4 text-blue-500" />
-                          <span className="sr-only">Edit Trade</span>
-                        </Button>
-                      </SheetTrigger>
-                      {/* === EDIT TRADE SHEET CONTENT MODIFICATION === */}
-                      <SheetContent className="flex flex-col h-full max-h-screen p-8"> {/* Added h-full and max-h-screen */}
-                        <SheetHeader>
-                          <SheetTitle>Edit Trade</SheetTitle>
-                          <SheetDescription>
-                            Modify the details for this trade.
-                          </SheetDescription>
-                        </SheetHeader>
-                        {/* The form itself is a flex container that grows to fill remaining space */}
-                        <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0"> {/* Added flex-1 and min-h-0 */}
-                          {/* This div contains the scrollable form fields */}
-                          <div className="flex-1 overflow-y-auto grid gap-4 py-4 pr-2"> {/* This is the scrollable area */}
-                            <TradeFormFields initialData={editingTrade} />
-                          </div>
-                          {/* The submit button, which stays fixed at the bottom */}
-                          <div className="mt-4">
-                            <Button type="submit" disabled={isPending} className="w-full">
-                              {isPending ? "Updating..." : "Save Changes"}
-                            </Button>
-                          </div>
-                        </form>
-                      </SheetContent>
-                      {/* ============================================ */}
-                    </Sheet>
+                </div>
+              </form>
+            </SheetContent>
+          </Sheet>
 
-                    {/* Delete Button */}
-                    <Button variant="ghost" size="icon" onClick={() => handleDelete(trade.id)} disabled={isPending}>
-                      <Trash2 className="h-4 w-4 text-red-500" />
-                      <span className="sr-only">Delete Trade</span>
-                    </Button>
-                  </TableCell>
+          <Dialog open={isDeleteAllConfirmOpen} onOpenChange={setIsDeleteAllConfirmOpen}>
+            <DialogTrigger asChild>
+              <Button variant="destructive" size="sm" className="w-full sm:w-auto">
+                <Trash2 className="h-4 w-4 mr-2 sm:mr-1" />
+                <span className="hidden xs:inline">Delete All Weekly Trades</span>
+                <span className="inline xs:hidden">Delete All</span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Are you absolutely sure?</DialogTitle>
+                <DialogDescription>
+                  This action cannot be undone. This will permanently delete all weekly trade data.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setIsDeleteAllConfirmOpen(false)}>Cancel</Button>
+                <Button variant="destructive" onClick={handleAllTradesDelete} disabled={isPending}>
+                  {isPending ? "Deleting..." : "Confirm Delete All"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
+      </CardHeader>
+      {showUpdateReminder && (
+        <p className="text-red-500 text-sm mt-2 px-6">
+          Reminder: Please update the trade data this weekend! <RotateCcw className="inline h-4 w-4 ml-1" />
+        </p>
+      )}
+      <Separator />
+
+      <CardContent className="p-0">
+        <div className="overflow-x-auto">
+          {loading ? (
+            <p className="text-center text-muted-foreground py-4">Loading weekly trade data...</p>
+          ) : trades.length === 0 ? (
+            <p className="text-center text-muted-foreground py-4">No weekly trade data available. Add a new trade!</p>
+          ) : (
+            <Table className="min-w-full divide-y divide-zinc-800">
+              {/* Removed whitespace here */}
+              <TableHeader className="bg-zinc-800 text-muted-foreground">
+                <TableRow>
+                  <TableHead className="w-[50px] px-4 py-3 text-left">S.NO</TableHead>
+                  <TableHead className="min-w-[120px] px-4 py-3 text-left">Date</TableHead>
+                  <TableHead className="min-w-[180px] px-4 py-3 text-left">Strike</TableHead>
+                  <TableHead className="min-w-[120px] px-4 py-3 text-right">Buying Price</TableHead>
+                  <TableHead className="min-w-[120px] px-4 py-3 text-right">Exit Price</TableHead>
+                  <TableHead className="min-w-[100px] px-4 py-3 text-left">Target</TableHead>
+                  <TableHead className="min-w-[100px] px-4 py-3 text-left">High</TableHead>
+                  <TableHead className="min-w-[120px] px-4 py-3 text-left">Profit/Loss</TableHead>
+                  <TableHead className="min-w-[120px] text-right px-4 py-3">Total Points</TableHead>
+                  <TableHead className="min-w-[80px] text-right px-4 py-3">Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
+              </TableHeader>{/* Removed whitespace here */}
+              <TableBody>
+                {trades.map((trade) => (
+                  <TableRow key={trade.id} className="border-b border-zinc-800 hover:bg-zinc-800/50">
+                    <TableCell className="font-medium px-4 py-2">{trade.sno}</TableCell>
+                    <TableCell className="px-4 py-2">{trade.date}</TableCell>
+                    <TableCell className="text-emerald-400 px-4 py-2">{trade.strike}</TableCell>
+                    <TableCell className="px-4 py-2 text-right">{trade.buyingPrice.toFixed(2)}</TableCell>
+                    <TableCell className="px-4 py-2 text-right">{trade.exitPrice.toFixed(2)}</TableCell>
+                    <TableCell className="px-4 py-2">{trade.target || 'N/A'}</TableCell>
+                    <TableCell className="px-4 py-2">{trade.high || 'N/A'}</TableCell>
+                    <TableCell
+                      className={
+                        trade.profitLoss === 'PROFIT' ? 'text-green-500 px-4 py-2' : 'text-red-500 px-4 py-2'
+                      }
+                    >
+                      {trade.profitLoss || 'N/A'}
+                    </TableCell>
+                    <TableCell className="text-right px-4 py-2">
+                      {trade.totalPoints ? trade.totalPoints.toFixed(2) : 'N/A'}
+                    </TableCell>
+                    <TableCell className="text-right flex items-center justify-end gap-1 px-4 py-2">
+                      <Sheet open={isEditSheetOpen && editingTrade?.id === trade.id} onOpenChange={(open) => {
+                        setIsEditSheetOpen(open);
+                        if (!open) setEditingTrade(null);
+                      }}>
+                        <SheetTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              setEditingTrade(trade);
+                              setIsEditSheetOpen(true);
+                            }}
+                          >
+                            <PencilLineIcon className="h-4 w-4 text-blue-500" />
+                            <span className="sr-only">Edit Trade</span>
+                          </Button>
+                        </SheetTrigger>
+                        <SheetContent className="flex flex-col h-full max-h-screen p-8">
+                          <SheetHeader>
+                            <SheetTitle>Edit Weekly Trade</SheetTitle>
+                            <SheetDescription>
+                              Modify the details for this weekly trade.
+                            </SheetDescription>
+                          </SheetHeader>
+                          <form onSubmit={handleTradeSubmit} className="flex flex-col flex-1 min-h-0">
+                            <div className="flex-1 overflow-y-auto grid gap-4 py-4 pr-2">
+                              <TradeFormFields initialData={editingTrade} formIdPrefix="edit-weekly-trade" />
+                            </div>
+                            <div className="mt-4">
+                              <Button type="submit" disabled={isPending} className="w-full">
+                                {isPending ? "Updating..." : "Save Changes"}
+                              </Button>
+                            </div>
+                          </form>
+                        </SheetContent>
+                      </Sheet>
+
+                      <Button variant="ghost" size="icon" onClick={() => handleTradeDelete(trade.id)} disabled={isPending}>
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                        <span className="sr-only">Delete Trade</span>
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </div>
       </CardContent>
     </Card>
   );

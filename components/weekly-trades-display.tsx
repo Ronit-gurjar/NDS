@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 
 // Corrected import path for Prisma types (consistent with your project structure)
-import { Prisma } from '@/lib/generated/prisma'; 
+import { Prisma } from '@prisma/client'; 
 
 // Define the type for a single trade using Prisma's generated types
 type TradeType = Prisma.TradeGetPayload<{}>;

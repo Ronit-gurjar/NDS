@@ -9,7 +9,7 @@ import { revalidatePath } from "next/cache";
 import {
   Trade as PrismaTradeModel, // Alias to avoid naming conflict with our 'Trade' type
   Prisma, // This import usually works for the Prisma namespace with types
-} from '@/lib/generated/prisma/client';
+} from '@prisma/client';
 
 
 // --- Define a type for your Trade model ---

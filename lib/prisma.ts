@@ -8,7 +8,7 @@
 // If lib/prisma.ts is in app/lib/, it would be ../../lib/generated/prisma
 // Let's assume lib/prisma.ts is directly under your project root's 'lib' directory.
 
-import { PrismaClient } from './generated/prisma'; // This path is relative from lib/prisma.ts to lib/generated/prisma
+import { PrismaClient } from '@prisma/client'; // This path is relative from lib/prisma.ts to lib/generated/prisma
 
 // If you also need the general Prisma namespace for types within lib/prisma.ts,
 // you would import it like this as well:
