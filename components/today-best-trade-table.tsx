@@ -69,7 +69,7 @@ export default function TodayBestTradeTable() {
   return (
     <Card className="w-full shadow-lg my-4 border border-zinc-800 rounded-lg">
       <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0 pb-2"> {/* Modified for responsiveness */}
-        <CardTitle className="text-xl font-bold">Today's Best Trade (Management)</CardTitle>
+        <CardTitle className="text-xl font-bold">Today&apos;s Best Trade (Management)</CardTitle>
         <div className="w-full sm:w-auto flex justify-end"> {/* Container for the button, ensures full width on small and right alignment on medium+ */}
           <Sheet open={isEditSheetOpen} onOpenChange={setIsEditSheetOpen}>
             <SheetTrigger asChild>
