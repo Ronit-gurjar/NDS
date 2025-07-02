@@ -102,9 +102,9 @@ export default function TodayBestTradeTable() {
       </CardHeader>
       <CardContent className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 text-sm pt-4"> {/* Adjusted grid for better spacing */}
         {loading ? (
-          <p className="col-span-full text-center text-muted-foreground py-4">Loading today's best trade...</p>
+          <p className="col-span-full text-center text-muted-foreground py-4">Loading today&apos;s best trade...</p>
         ) : !dailyBestTrade ? (
-          <p className="col-span-full text-center text-muted-foreground py-4">No daily best trade set yet. Click "Set Today's Best Trade" to add one.</p>
+          <p className="col-span-full text-center text-muted-foreground py-4">No daily best trade set yet. Click &quot;Set Today&apos;s Best Trade&quot; to add one.</p>
         ) : (
           <>
             {/* Display the current Daily Best Trade data */}
