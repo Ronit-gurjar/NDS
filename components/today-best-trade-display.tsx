@@ -56,7 +56,7 @@ export function TodayBestTradeDisplay() {
   return (
     <Card className="w-full shadow-lg my-4 border border-zinc-800 rounded-lg">
       <CardHeader>
-        <CardTitle className="text-xl font-bold">Today's Best Trade</CardTitle>
+        <CardTitle className="text-xl font-bold">Today&apos;s Best Trade</CardTitle>
       </CardHeader>
       <CardContent className="grid grid-cols-2 gap-4 text-sm pt-4">
         {!dailyBestTrade ? (
