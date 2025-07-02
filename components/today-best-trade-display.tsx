@@ -19,7 +19,7 @@ export function TodayBestTradeDisplay() {
       if (result.success) {
         setDailyBestTrade(result.data ?? null);
       } else {
-        setError(result.error || "Failed to fetch today's best trade.");
+        setError(result.error || "Failed to fetch today&apos;s best trade."); // Escaped apostrophe
       }
       setLoading(false);
     };
@@ -31,10 +31,10 @@ export function TodayBestTradeDisplay() {
     return (
       <Card className="w-full shadow-lg my-4 border border-zinc-800 rounded-lg">
         <CardHeader>
-          <CardTitle className="text-xl font-bold">Today's Best Trade</CardTitle>
+          <CardTitle className="text-xl font-bold">Today&apos;s Best Trade</CardTitle> {/* Escaped apostrophe */}
         </CardHeader>
         <CardContent className="text-center text-muted-foreground py-4">
-          Loading today's best trade...
+          Loading today&apos;s best trade... {/* Escaped apostrophe */}
         </CardContent>
       </Card>
     );
@@ -44,7 +44,7 @@ export function TodayBestTradeDisplay() {
     return (
       <Card className="w-full shadow-lg my-4 border border-zinc-800 rounded-lg">
         <CardHeader>
-          <CardTitle className="text-xl font-bold">Today's Best Trade</CardTitle>
+          <CardTitle className="text-xl font-bold">Today&apos;s Best Trade</CardTitle> {/* Escaped apostrophe */}
         </CardHeader>
         <CardContent className="text-center text-red-500 py-4">
           Error: {error}
@@ -56,7 +56,7 @@ export function TodayBestTradeDisplay() {
   return (
     <Card className="w-full shadow-lg my-4 border border-zinc-800 rounded-lg">
       <CardHeader>
-        <CardTitle className="text-xl font-bold">Today&apos;s Best Trade</CardTitle>
+        <CardTitle className="text-xl font-bold">Today&apos;s Best Trade</CardTitle> {/* Escaped apostrophe */}
       </CardHeader>
       <CardContent className="grid grid-cols-2 gap-4 text-sm pt-4">
         {!dailyBestTrade ? (
